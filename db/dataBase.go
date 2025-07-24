@@ -1,55 +1,45 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type DataBase interface {
 	Connect(login, password string) error
-	Close() error
+	GetDB() *gorm.DB
 }
 
 type PostgreSQL struct {
 	Host   string
 	Port   string
 	Dbname string
-	db     *sql.DB
+	db     *gorm.DB
 }
 
-func CreatePostgresDataBase(host string, port, dbname string) (*PostgreSQL, error) {
-
+func CreatePostgresDataBase(host, port, dbname string) *PostgreSQL {
 	return &PostgreSQL{
 		Host:   host,
 		Port:   port,
 		Dbname: dbname,
-	}, nil
+	}
 }
 
 func (p *PostgreSQL) Connect(login, password string) error {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", p.Host, p.Port, login, password, p.Dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		p.Host, p.Port, login, password, p.Dbname)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return fmt.Errorf("create connction to database failed: %v", err)
+		return fmt.Errorf("failed to connect to database with GORM: %v", err)
 	}
-	err = db.Ping()
-	if err != nil {
-		db.Close()
-		return fmt.Errorf("ping database failed: %v", err)
-	}
+
 	p.db = db
-	fmt.Println("Successfully connected to database")
+	fmt.Println("Successfully connected to database (GORM)")
 	return nil
 }
 
-func (p *PostgreSQL) Close() error {
-	if p.db != nil {
-		err := p.db.Close()
-		if err != nil {
-			return fmt.Errorf("close database failed: %v", err)
-		}
-		p.db = nil
-		fmt.Println("Successfully closed database")
-	}
-	return nil
+func (p *PostgreSQL) GetDB() *gorm.DB {
+	return p.db
 }
