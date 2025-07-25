@@ -1,6 +1,5 @@
 package router
 
-// RouterType тип роутера (можно расширить)
 type RouterType string
 
 const (

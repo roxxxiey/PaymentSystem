@@ -12,9 +12,3 @@ type Transaction struct {
 	Amount    float32   `json:"amount"`
 	TimeTrans time.Time `json:"time_trans"`
 }
-
-type Sender struct {
-	ToTrans   uuid.UUID `json:"to_trans"`
-	FromTrans uuid.UUID `json:"from_trans"`
-	Amount    float32   `json:"amount"`
-}

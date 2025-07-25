@@ -21,7 +21,6 @@ func PostSend(c *gin.Context) {
 		return
 	}
 
-	// Написать логику обработки перевода средств
 	err := logic.SendMoney(request.FromTrans, request.ToTrans, request.Amount)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

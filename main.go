@@ -6,12 +6,20 @@ import (
 	"PaymentSystem/router"
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 )
 
 func main() {
-	database := db.CreatePostgresDataBase("localhost", "5432", "postgresPayment")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
 
-	err := database.Connect("postgres", "gintas2003")
+	database := db.CreatePostgresDataBase(dbHost, dbPort, dbName)
+
+	err := database.Connect(
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+	)
 	if err != nil {
 		panic(err)
 	}

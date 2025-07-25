@@ -23,7 +23,7 @@ func (r *GinRouter) SetupRoutes() {
 
 	api := r.engine.Group("/api")
 	{
-		//api.GET("/transactions", ginHandlers.GetLast)
+		api.GET("/transactions", ginHandlers.GetLast)
 		api.GET("/wallet/:wname/balance", ginHandlers.GetBalance)
 		api.POST("/send", ginHandlers.PostSend)
 	}
